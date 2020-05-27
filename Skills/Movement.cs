@@ -120,6 +120,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
             {
                 // Speed is the ratio between "1/strain time" and the distance moved
                 // So the larger and shorter a movement will be, the more it will be valued
+                // This doesn't make sense as an equation but it's easier to judge with this formula
                 distanceRatioBonus  = ((2000/ weightedStrainTime) * Math.Abs(distanceMoved*3)) / 3300;
             }
             distanceAddition *= 0.85 + distanceRatioBonus; // This mostly nerfes HDashes
