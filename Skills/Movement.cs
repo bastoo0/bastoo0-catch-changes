@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
         private float? lastPlayerPosition;
         private float lastDistanceMoved;
         private double lastStrainTime;
-        private double lastStrainTimeVariation;
+
         //private double totalDistanceTraveled;
 
         public Movement(float halfCatcherWidth)
@@ -52,7 +52,8 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
 
             double weightedStrainTime = catchCurrent.StrainTime + 13 + (3 / catchCurrent.ClockRate);
 
-            double distanceAddition = (Math.Pow(Math.Abs(distanceMoved), 1.3) / 510);
+            // Reduced this a little bit
+            double distanceAddition = (Math.Pow(Math.Abs(distanceMoved), 1.15) / 510);
             double sqrtStrain = Math.Sqrt(weightedStrainTime);
 
             double edgeDashBonus = 0;
@@ -69,40 +70,17 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
                 }
 
                 // Base bonus for every movement, giving some weight to streams.
-                // I increased this bonus to give more weight to every object
-                distanceAddition += 16 * Math.Min(Math.Abs(distanceMoved), normalized_hitobject_radius * 2) / (normalized_hitobject_radius * 6) / sqrtStrain;
+                distanceAddition += 12 * Math.Min(Math.Abs(distanceMoved), normalized_hitobject_radius * 2) / (normalized_hitobject_radius * 6) / sqrtStrain;
 
 
-                // New change
-                // Bonus for BPM changes
-                // This one is a little bit hacky but works well on many tech maps
-                // Every value is a "placeholder" and is likely to be changed to improve the calculation
-                double strainTimeDifference = Math.Abs(lastStrainTime - catchCurrent.StrainTime);
-                
-                double STVariationbonus = 0.95f; // Nerfes a little bit when there is no BPM change
-                // Gives a bonus if there is a significant straintime change
-                // The range is a placeholder
-                if (strainTimeDifference > 10f)
-                {
-                    STVariationbonus = 1.25f; // The values are placeholders and definitely improvable
-                    // A higher bonus bonus is given if the BPM change is not approximately the same as the previous
-                    // The range is also a placeholder
-                    if (strainTimeDifference < lastStrainTimeVariation - 10f || strainTimeDifference > lastStrainTimeVariation + 10f)
-                    {
-                        STVariationbonus += 0.30;
-                        lastStrainTimeVariation = strainTimeDifference; // Keeps track of the last variation
-                    }
-                }
-                
-                distanceAddition *= STVariationbonus;
-                
+
             }
             // Bonus for edge dashes.
             if (catchCurrent.LastObject.DistanceToHyperDash <= 20.0f / CatchPlayfield.BASE_WIDTH)
             {
                 // I nerfed edge dash bonus because of the buff to non-hyperdashes
                 if (!catchCurrent.LastObject.HyperDash)
-                    edgeDashBonus += 2.3;
+                    edgeDashBonus += 3.3;
                 else
                 {
                     // After a hyperdash we ARE in the correct position. Always!
@@ -114,22 +92,36 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
             }
 
             // New change
-            double distanceRatioBonus = 0;
+            double distanceRatioBonus;
             // Gives weight to non-hyperdashes
             if (!catchCurrent.LastObject.HyperDash)
             {
                 // Speed is the ratio between "1/strain time" and the distance moved
                 // So the larger and shorter a movement will be, the more it will be valued
                 // This doesn't make sense as an equation but it's easier to judge with this formula
-                distanceRatioBonus  = ((2000/ weightedStrainTime) * Math.Abs(distanceMoved*3)) / 3300;
+
+                //Give value to long and fast movements
+                distanceRatioBonus = ((2000 / weightedStrainTime) * Math.Abs(distanceMoved * 3)) / 3000;
+
+
+                // Give value to short movements if direction change
+                if(distanceMoved > 10 && distanceMoved < 30 && Math.Sign(distanceMoved) != Math.Sign(lastDistanceMoved))
+                {
+                    distanceRatioBonus += Math.Log(30 / Math.Abs(distanceMoved), 1.2) * 2.3;
+                }
             }
-            distanceAddition *= 0.85 + distanceRatioBonus; // This mostly nerfes HDashes
-            
+            else // Hyperdashes calculation
+            {
+                distanceRatioBonus = (20 / weightedStrainTime) * Math.Abs(distanceMoved * 4) / 900;
+
+            }
+            distanceAddition *= 0.85 + distanceRatioBonus;
+
 
             lastPlayerPosition = playerPosition;
             lastDistanceMoved = distanceMoved;
             lastStrainTime = catchCurrent.StrainTime;
-            
+
 
             return distanceAddition / weightedStrainTime;
         }
