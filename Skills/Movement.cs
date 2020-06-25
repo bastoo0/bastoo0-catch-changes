@@ -70,7 +70,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
                 }
 
                 // Base bonus for every movement, giving some weight to streams.
-                distanceAddition += 9 * Math.Min(Math.Abs(distanceMoved), normalized_hitobject_radius * 2) / (normalized_hitobject_radius * 6) / sqrtStrain;
+                distanceAddition += 8 * Math.Min(Math.Abs(distanceMoved), normalized_hitobject_radius * 2) / (normalized_hitobject_radius * 6) / sqrtStrain;
 
 
 
@@ -80,7 +80,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
             {
                 // Bonus increased
                 if (!catchCurrent.LastObject.HyperDash)
-                    edgeDashBonus += 13;
+                    edgeDashBonus += 6;
                 else
                 {
                     // After a hyperdash we ARE in the correct position. Always!
@@ -99,17 +99,18 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
                 // So the larger and shorter a movement will be, the more it will be valued
 
                 //Give value to long and fast movements
-                distanceRatioBonus = Math.Abs(distanceMoved) / weightedStrainTime;
+                distanceRatioBonus = 2.8 * Math.Abs(distanceMoved) / weightedStrainTime;
 
                 // Give value to short movements if direction change
-                if (distanceMoved > 0.1 && distanceMoved < 40 && Math.Sign(distanceMoved) != Math.Sign(lastDistanceMoved))
+                if (distanceMoved > 0.1 && distanceMoved < 50 && Math.Sign(distanceMoved) != Math.Sign(lastDistanceMoved))
                 {
-                    distanceRatioBonus += Math.Log(100 / Math.Abs(distanceMoved), 1.2) * 1.2;
+                    //Console.WriteLine("Bonus: " + distanceRatioBonus + " ; distance: " + distanceMoved);
+                    distanceRatioBonus +=  Math.Log(50 / Math.Abs(distanceMoved), 1.2) * 1.8;
                 }
             }
             else // Hyperdashes calculation
             {
-                distanceRatioBonus = Math.Abs(distanceMoved) / (2.5 * weightedStrainTime);
+                distanceRatioBonus = Math.Abs(distanceMoved) / (2.2 * weightedStrainTime);
 
             }
             distanceAddition *= 0.8 + distanceRatioBonus;
