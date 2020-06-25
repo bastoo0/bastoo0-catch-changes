@@ -52,8 +52,8 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
 
             double weightedStrainTime = catchCurrent.StrainTime + 13 + (3 / catchCurrent.ClockRate);
 
-            // Reduced this a little bit
-            double distanceAddition = (Math.Pow(Math.Abs(distanceMoved), 1.15) / 510);
+            // Reduced this
+            double distanceAddition = (Math.Pow(Math.Abs(distanceMoved), 1.15) / 1100);
             double sqrtStrain = Math.Sqrt(weightedStrainTime);
 
             double edgeDashBonus = 0;
@@ -70,7 +70,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
                 }
 
                 // Base bonus for every movement, giving some weight to streams.
-                distanceAddition += 12 * Math.Min(Math.Abs(distanceMoved), normalized_hitobject_radius * 2) / (normalized_hitobject_radius * 6) / sqrtStrain;
+                distanceAddition += 9 * Math.Min(Math.Abs(distanceMoved), normalized_hitobject_radius * 2) / (normalized_hitobject_radius * 6) / sqrtStrain;
 
 
 
@@ -78,9 +78,9 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
             // Bonus for edge dashes.
             if (catchCurrent.LastObject.DistanceToHyperDash <= 20.0f / CatchPlayfield.BASE_WIDTH)
             {
-                // I nerfed edge dash bonus because of the buff to non-hyperdashes
+                // Bonus increased
                 if (!catchCurrent.LastObject.HyperDash)
-                    edgeDashBonus += 3.3;
+                    edgeDashBonus += 13;
                 else
                 {
                     // After a hyperdash we ARE in the correct position. Always!
@@ -91,31 +91,28 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
 
             }
 
-            // New change
             double distanceRatioBonus;
             // Gives weight to non-hyperdashes
             if (!catchCurrent.LastObject.HyperDash)
             {
                 // Speed is the ratio between "1/strain time" and the distance moved
                 // So the larger and shorter a movement will be, the more it will be valued
-                // This doesn't make sense as an equation but it's easier to judge with this formula
 
                 //Give value to long and fast movements
-                distanceRatioBonus = ((2000 / weightedStrainTime) * Math.Abs(distanceMoved * 3)) / 3000;
-
+                distanceRatioBonus = Math.Abs(distanceMoved) / weightedStrainTime;
 
                 // Give value to short movements if direction change
-                if(distanceMoved > 10 && distanceMoved < 30 && Math.Sign(distanceMoved) != Math.Sign(lastDistanceMoved))
+                if (distanceMoved > 0.1 && distanceMoved < 40 && Math.Sign(distanceMoved) != Math.Sign(lastDistanceMoved))
                 {
-                    distanceRatioBonus += Math.Log(30 / Math.Abs(distanceMoved), 1.2) * 2.3;
+                    distanceRatioBonus += Math.Log(100 / Math.Abs(distanceMoved), 1.2) * 1.2;
                 }
             }
             else // Hyperdashes calculation
             {
-                distanceRatioBonus = (20 / weightedStrainTime) * Math.Abs(distanceMoved * 4) / 900;
+                distanceRatioBonus = Math.Abs(distanceMoved) / (2.5 * weightedStrainTime);
 
             }
-            distanceAddition *= 0.85 + distanceRatioBonus;
+            distanceAddition *= 0.8 + distanceRatioBonus;
 
 
             lastPlayerPosition = playerPosition;

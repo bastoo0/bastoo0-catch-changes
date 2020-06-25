@@ -19,7 +19,8 @@ namespace osu.Game.Rulesets.Catch.Difficulty
 {
     public class CatchDifficultyCalculator : DifficultyCalculator
     {
-        private const double star_scaling_factor = 0.153;
+        // Reduced this factor to scale the results
+        private const double star_scaling_factor = 0.135;
 
         protected override int SectionLength => 750;
 
