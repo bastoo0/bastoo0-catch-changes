@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty
             if (mods.Any(m => m is ModHalfTime))
                 value *= 0.85;
 
-            // Custom multiplier for HalfTime -> faster catcher = harder to control
+            // Custom multiplier for DoubleTime -> faster catcher = harder to control
             if (mods.Any(m => m is ModDoubleTime))
                 value *= 1.10;
 
