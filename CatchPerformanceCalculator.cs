@@ -78,7 +78,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty
 
             if (mods.Any(m => m is ModHidden))
             {
-                value *= 1 + 0.2 * (9.8 - Math.Min(9.8, Attributes.ApproachRate)); // 20% for each AR below 10
+                value *= 1 + 0.2 * (9.8 - Math.Min(9.8, Attributes.ApproachRate)); // 20% for each AR below 9.8
             }
 
             if (mods.Any(m => m is ModFlashlight))
