@@ -63,7 +63,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
             {
                 // Bonus increased
                 if (!catchCurrent.LastObject.HyperDash)
-                    edgeDashBonus += 6.7;
+                    edgeDashBonus += 6.4;
                 else
                 {
                     // After a hyperdash we ARE in the correct position. Always!
