@@ -51,7 +51,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
 
             float distanceMoved = playerPosition - lastPlayerPosition.Value;
 
-            double weightedStrainTime = catchCurrent.StrainTime + 6.8 + (1 / catchCurrent.ClockRate);
+            double weightedStrainTime = catchCurrent.StrainTime + 7 + (1.5 / catchCurrent.ClockRate);
 
             // We do the base scaling according to the distance moved
             double distanceAddition = (Math.Pow(Math.Abs(distanceMoved), 0.87) / 210);
@@ -63,7 +63,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
             {
                 // Bonus increased
                 if (!catchCurrent.LastObject.HyperDash)
-                    edgeDashBonus += 6.4;
+                    edgeDashBonus += 6.5;
                 else
                 {
                     // After a hyperdash we ARE in the correct position. Always!
@@ -83,26 +83,26 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
 
                 //Give value to long and fast movements
 
-                distanceRatioBonus = 2.3 * Math.Abs(distanceMoved) / weightedStrainTime;
+                distanceRatioBonus = 1.87 * Math.Abs(distanceMoved) / weightedStrainTime;
 
-                double antiflowFactor =  4.9 * Math.Max(Math.Min(70, Math.Abs(lastDistanceMoved)) / 70, 0.38);
+                double antiflowFactor =  Math.Max(Math.Min(70, Math.Abs(lastDistanceMoved)) / 70, 0.38);
 
                 if (Math.Sign(distanceMoved) != Math.Sign(lastDistanceMoved))
                 {
                     DirectionChangeCount += 1;
 
-                    distanceRatioBonus *= antiflowFactor / 3;
+                    distanceRatioBonus *= antiflowFactor * 2.4;
                     // Give value to short movements if direction change
                     if (distanceMoved > 0.1 && distanceMoved < 50)
                     {
-                        distanceRatioBonus += Math.Log(50 / Math.Abs(distanceMoved), 1.22) * antiflowFactor;
+                        distanceRatioBonus += Math.Log(50 / Math.Abs(distanceMoved), 1.22) * antiflowFactor * 4.7;
                     }
                 }
 
             }
             else // Hyperdashes calculation
             {
-                distanceRatioBonus = Math.Abs(distanceMoved) / (2.5 * weightedStrainTime);
+                distanceRatioBonus = Math.Abs(distanceMoved) / (2.4 * weightedStrainTime);
 
             }
             double distanceRatioBonusFactor = 4.95;
