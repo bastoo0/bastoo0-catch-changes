@@ -19,7 +19,7 @@ Performance Points are mostly based on the Star Rating but some other factors ar
 
 My changes are the following :
 
-- The length bonus is now composed of 2 factors: the number of hitobjects (which was formerly the only factor) and the count of direction changes, it's a better way to evaluate the stamina
+- The length bonus is now composed of 2 factors: the number of hitobjects (which was formerly the only factor) and the count of direction changes, it's a better way to evaluate the stamina. The length bonus has been greatly reduced on short maps.
 - Low AR on Hidden has been greatly buffed below AR 9.8
 - Low AR on NoMod has been slightly buffed below AR 9 (it will be mostly visible on really low AR and Easy plays)
 - HalfTime Mod recieve a nerf on every AR because it makes the catcher slower and easier to control
