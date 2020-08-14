@@ -4,12 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using osu.Framework.Extensions;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
-using osu.Game.Scoring.Legacy;
 
 namespace osu.Game.Rulesets.Catch.Difficulty
 {
@@ -34,11 +34,11 @@ namespace osu.Game.Rulesets.Catch.Difficulty
         {
             mods = Score.Mods;
 
-            fruitsHit = Score?.GetCount300() ?? Score.Statistics[HitResult.Perfect];
-            ticksHit = Score?.GetCount100() ?? 0;
-            tinyTicksHit = Score?.GetCount50() ?? 0;
-            tinyTicksMissed = Score?.GetCountKatu() ?? 0;
-            misses = Score.Statistics[HitResult.Miss];
+            fruitsHit = Score.Statistics.GetOrDefault(HitResult.Perfect);
+            ticksHit = Score.Statistics.GetOrDefault(HitResult.LargeTickHit);
+            tinyTicksHit = Score.Statistics.GetOrDefault(HitResult.SmallTickHit);
+            tinyTicksMissed = Score.Statistics.GetOrDefault(HitResult.SmallTickMiss);
+            misses = Score.Statistics.GetOrDefault(HitResult.Miss);
 
             // Don't count scores made with supposedly unranked mods
             if (mods.Any(m => !m.Ranked))
@@ -53,7 +53,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty
             // Longer maps with more movements are worth more
             double lengthBonusFactor = numTotalHits * 0.75 + (float)Attributes.DirectionChangeCount / 1.8;
 
-            double lengthBonus = Math.Log10(lengthBonusFactor + 100) * 0.75 - 1.3;
+            double lengthBonus = Math.Log10(lengthBonusFactor + 100) * 0.7 - 1.3;
 
             // Longer maps are worth more
             value *= lengthBonus;
@@ -64,6 +64,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty
             // Combo scaling
             if (Attributes.MaxCombo > 0)
                 value *= Math.Min(Math.Pow(Score.MaxCombo, 0.8) / Math.Pow(Attributes.MaxCombo, 0.8), 1.0);
+
 
             float approachRate = (float)Attributes.ApproachRate;
             float approachRateFactor = 1.0f;
@@ -107,7 +108,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty
             return value;
         }
 
-        private float accuracy() => totalHits() == 0 ? 0 : Math.Clamp((float)totalSuccessfulHits() / totalHits(), 0, 1);
+        private double accuracy() => totalHits() == 0 ? 0 : Math.Clamp((double)totalSuccessfulHits() / totalHits(), 0, 1);
         private int totalHits() => tinyTicksHit + ticksHit + fruitsHit + misses + tinyTicksMissed;
         private int totalSuccessfulHits() => tinyTicksHit + ticksHit + fruitsHit;
         private int totalComboHits() => misses + ticksHit + fruitsHit;
