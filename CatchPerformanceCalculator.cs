@@ -78,18 +78,18 @@ namespace osu.Game.Rulesets.Catch.Difficulty
 
             if (mods.Any(m => m is ModHidden))
             {
-                value *= 1 + 0.175 * (9.8 - Math.Min(9.8, Attributes.ApproachRate)); // 20% for each AR below 9.8
+                value *= 1.05 + 0.17 * (10 - Math.Min(10, Attributes.ApproachRate)); // 17% for each AR below 10
             }
 
             if (mods.Any(m => m is ModFlashlight))
             {
                 // Apply length bonus again if flashlight is on simply because it becomes a lot harder on longer maps.
-                value *= 1.35 * lengthBonus;
+                value *= 1.35f * lengthBonus;
 
                 if (approachRate > 8.0f)
-                    approachRateFactor += 0.1f * (approachRate - 8.0f); // 10% for each AR above 8
+                    value *= 0.1f * (approachRate - 8.0f) + 1f; // 10% for each AR above 8
                 if (approachRate < 8.0f)
-                    approachRateFactor -= 0.07f * (approachRate - 8.0f); // -7% for each AR below 8
+                    value *= 0.07f * (approachRate - 8.0f) + 1f; // -7% for each AR below 8
             }
 
 
@@ -99,10 +99,6 @@ namespace osu.Game.Rulesets.Catch.Difficulty
             // Custom multiplier for HalfTime -> slower catcher = easier to control
             if (mods.Any(m => m is ModHalfTime))
                 value *= 0.85;
-
-            // Custom multiplier for DoubleTime -> faster catcher = harder to control
-            if (mods.Any(m => m is ModDoubleTime))
-                value *= 1.10;
 
             // Custom multipliers for NoFail. SpunOut is not applicable.
             if (mods.Any(m => m is ModNoFail))

@@ -2,8 +2,6 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
-using Humanizer;
-using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Catch.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Catch.UI;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
@@ -25,11 +23,8 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
 
         private float? lastPlayerPosition;
         private float lastDistanceMoved;
-        private double lastStrainTime;
 
-        public double DirectionChangeCount = 0;
-
-        //private double totalDistanceTraveled;
+        public double DirectionChangeCount;
 
         public Movement(float halfCatcherWidth)
         {
@@ -40,8 +35,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
         {
             var catchCurrent = (CatchDifficultyHitObject)current;
 
-            if (lastPlayerPosition == null)
-                lastPlayerPosition = catchCurrent.LastNormalizedPosition;
+            lastPlayerPosition ??= catchCurrent.LastNormalizedPosition;
 
             float playerPosition = Math.Clamp(
                 lastPlayerPosition.Value,
@@ -51,7 +45,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
 
             float distanceMoved = playerPosition - lastPlayerPosition.Value;
 
-            double weightedStrainTime = catchCurrent.StrainTime + 7 + (1.5 / catchCurrent.ClockRate);
+            double weightedStrainTime = catchCurrent.StrainTime + 7 + (2 / catchCurrent.ClockRate);
 
             // We do the base scaling according to the distance moved
             double distanceAddition = (Math.Pow(Math.Abs(distanceMoved), 0.87) / 210);
@@ -63,7 +57,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
             {
                 // Bonus increased
                 if (!catchCurrent.LastObject.HyperDash)
-                    edgeDashBonus += 6.5;
+                    edgeDashBonus += 6;
                 else
                 {
                     // After a hyperdash we ARE in the correct position. Always!
@@ -85,7 +79,7 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
 
                 distanceRatioBonus = 1.87 * Math.Abs(distanceMoved) / weightedStrainTime;
 
-                double antiflowFactor =  Math.Max(Math.Min(70, Math.Abs(lastDistanceMoved)) / 70, 0.38);
+                double antiflowFactor = Math.Max(Math.Min(70, Math.Abs(lastDistanceMoved)) / 70, 0.38);
 
                 if (Math.Sign(distanceMoved) != Math.Sign(lastDistanceMoved))
                 {
@@ -117,11 +111,8 @@ namespace osu.Game.Rulesets.Catch.Difficulty.Skills
 
             lastPlayerPosition = playerPosition;
             lastDistanceMoved = distanceMoved;
-            lastStrainTime = catchCurrent.StrainTime;
 
-            double value = distanceAddition / weightedStrainTime;
-
-            return value;
+            return distanceAddition / weightedStrainTime;
         }
     }
 }
