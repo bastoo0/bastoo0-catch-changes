@@ -101,6 +101,10 @@ namespace osu.Game.Rulesets.Catch.Difficulty
             if (mods.Any(m => m is ModHalfTime))
                 value *= 0.85;
 
+            // Custom multiplier for DoubleTime -> faster catcher = harder to control
+            if (mods.Any(m => m is ModHalfTime))
+                value *= 1.05;
+
             // Custom multipliers for NoFail. SpunOut is not applicable.
             if (mods.Any(m => m is ModNoFail))
                 value *= 0.90;
