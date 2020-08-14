@@ -8,7 +8,7 @@ In a nutshell, my changes are the following :
 - The base value of the SR is the distance, so I reduced that to nerf fullscreen jumps
 - Nerfing hyper-dashes to reduce the importance of the distance bonus
 - Giving a huge buff on short movements upon direction change
-- Nerfing edge dashes bonus because it's less necessary now
+- Nerfing edge dashes bonus because it's less necessary now and adding a clockrate factor mostly to nerf DoubleTime
 
 
 ## Performance Points
